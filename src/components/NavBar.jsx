@@ -2,7 +2,7 @@ import React from "react";
 
 const Navbar = () => {
   return (
-    <div className="bg-gray-100 py-2 px-4 flex items-center shadow-md h-16">
+    <div className="bg-gray-100 py-2 px-4 flex items-center shadow-md h-16 fixed top-0 left-0 w-full z-50">
       <div className="flex items-center space-x-3">
         <div>
           <img src="assets/images/logo.png" alt="logo" width={40} />
@@ -43,7 +43,7 @@ const Navbar = () => {
             width={80}
             className="rounded-full"
           />
-          <span className="absolute top-5 right-[5.2rem]">+ Sell</span>
+          <span className="absolute top-5 right-[4.1rem]">+ Sell</span>
         </div>
       </div>
     </div>

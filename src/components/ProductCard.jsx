@@ -3,7 +3,7 @@ import React from "react";
 const ProductCard = () => {
   return (
     <div className="p-5">
-      <div className="border border-gray-400 max-w-72 rounded-sm">
+      <div className="border border-gray-400 w-72 rounded-sm">
         <div className="w-full p-2">
           <div className="w-full h-52">
             <img
