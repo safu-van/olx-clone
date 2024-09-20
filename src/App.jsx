@@ -7,7 +7,7 @@ import SellPage from "./pages/SellPage";
 function App() {
   return (
     <div>
-      <SellPage />
+      <SignUp />
     </div>
   );
 }

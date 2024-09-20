@@ -1,6 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function SignUp() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [number, setNumber] = useState("");
+  const [password, setPassword] = useState("");
+
+  const validateForm = () => {
+    if (name.trim() == "") {
+      toast.error("Enter a valid Name");
+      return false;
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      toast.error("Enter a valid Name");
+      return false;
+    }
+
+    if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
+      toast.error("Enter a valid Email");
+      return false;
+    }
+
+    if (!/^\d{10}$/.test(number)) {
+      toast.error("Enter a valid Phone Number");
+      return false;
+    }
+
+    if (
+      !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(
+        password
+      )
+    ) {
+      toast.error(
+        "Password must be at least 8 characters, contain 1 uppercase letter, 1 number, and 1 special character"
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    if (validateForm()) {
+      console.log(name, email, number, password)
+    }
+  };
+
   return (
     <section className="bg-gray-50">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -10,7 +57,10 @@ function SignUp() {
             <h1 className="text-xl font-bold text-gray-900 md:text-2xl flex justify-center">
               Sign Up
             </h1>
-            <form className="space-y-4 md:space-y-6 text-left">
+            <form
+              className="space-y-4 md:space-y-6 text-left"
+              onSubmit={handleFormSubmit}
+            >
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 ">
                   Name
@@ -19,6 +69,8 @@ function SignUp() {
                   type="text"
                   name="name"
                   id="name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="name"
                   required
@@ -32,6 +84,8 @@ function SignUp() {
                   type="email"
                   name="email"
                   id="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="example@example.com"
                   required
@@ -45,8 +99,10 @@ function SignUp() {
                   type="number"
                   name="number"
                   id="number"
+                  value={number}
+                  onChange={(event) => setNumber(event.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="000000000"
+                  placeholder="000-000-000"
                   required
                 />
               </div>
@@ -58,6 +114,8 @@ function SignUp() {
                   type="password"
                   name="password"
                   id="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="password"
                   required
@@ -75,7 +133,7 @@ function SignUp() {
                 </div>
                 <div className="ml-3 text-sm">
                   <label className="font-light text-gray-500 ">
-                    I accept the{" "}
+                    I accept the&nbsp;
                     <a className="font-medium text-primary-600 hover:underline cursor-pointer">
                       Terms and Conditions
                     </a>
@@ -98,6 +156,7 @@ function SignUp() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </section>
   );
 }
