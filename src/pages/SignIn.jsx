@@ -1,6 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function SignIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const validateForm = () => {
+    if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
+      toast.error("Invalid email or password.");
+      return false;
+    }
+
+    if (
+      !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(
+        password
+      )
+    ) {
+      toast.error("Invalid email or password.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleFormSubmit = () => {
+    if (validateForm()) {
+      console.log(email, password)
+    }
+  }
+
   return (
     <section className="bg-gray-50">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -19,6 +48,8 @@ function SignIn() {
                   type="email"
                   name="email"
                   id="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="example@example.com"
                   required
@@ -32,17 +63,19 @@ function SignIn() {
                   type="password"
                   name="password"
                   id="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="password"
                   required
                 />
               </div>
-              <button className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+              <button onClick={handleFormSubmit} className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
                 Login
               </button>
               <div className="flex justify-center">
                 <p className="text-sm font-light text-gray-500 ">
-                  New in OLX? &nbsp;{" "}
+                  New in OLX? &nbsp;
                   <a className="font-medium text-primary-600 hover:underline cursor-pointer">
                     SignUp here
                   </a>
@@ -52,6 +85,7 @@ function SignIn() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </section>
   );
 }
