@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FirebaseContext } from "../context/FirebaseContext";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FirebaseContext } from "../context/Context";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -52,22 +52,28 @@ function SignUp() {
     event.preventDefault();
     if (validateForm()) {
       createUserWithEmailAndPassword(auth, email, password)
-        .then((response) => {
-          setDoc(doc(firestore, "users", response.user.uid), {
-            user_id:response.user.uid,
-            name:name,
-            phone_number:number
+      .then((response) => {
+        updateProfile(response.user, { displayName: name })
+          .then(() => {
+            setDoc(doc(firestore, "users", response.user.uid), {
+              user_id: response.user.uid,
+              name: name,
+              phone_number: number,
+            })
+              .then(() => {
+                navigate("/signin");
+              })
+              .catch((error) => {
+                console.log("Error while uploading data to Firestore:", error);
+              });
           })
-            .then(() => {
-              navigate("/signin")
-            })
-            .catch((error) => {
-              console.log("error while uploading data to firestore :", error)
-            })
-        })
-        .catch((error) => {
-          console.log("error while creating user :", error)
-        })
+          .catch((error) => {
+            console.log("Error while updating profile:", error);
+          });
+      })
+      .catch((error) => {
+        console.log("Error while creating user:", error);
+      });
     }
   };
 

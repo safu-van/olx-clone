@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FirebaseContext } from "../context/FirebaseContext";
+import { FirebaseContext } from "../context/Context";
 
 function SignIn() {
   const [email, setEmail] = useState("");

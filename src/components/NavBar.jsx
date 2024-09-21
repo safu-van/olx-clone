@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { AuthenticationContext, FirebaseContext } from "../context/Context";
 
 const Navbar = () => {
+  const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate()
+
+  const { user } = useContext(AuthenticationContext);
+  const { auth } = useContext(FirebaseContext)
+
+  const handleLogout = () =>{
+    signOut(auth)
+      .then(() => {
+        navigate("/signin")
+      })
+      .catch((error) => {
+        console.log("error while logout :", error)
+      })
+  }
+
   return (
     <div className="bg-gray-100 py-2 px-4 flex items-center shadow-md h-16 fixed top-0 left-0 w-full z-50">
       <div className="flex items-center space-x-3">
@@ -15,7 +34,7 @@ const Navbar = () => {
           placeholder="Find Cars, Mobile Phones and more..."
         />
       </div>
-      <div className="flex items-center space-x-10 ml-11">
+      <div className="flex items-center ml-11 w-56">
         <div className="flex items-center space-x-1 text-gray-700">
           <span>ENGLISH</span>
           <svg
@@ -33,18 +52,31 @@ const Navbar = () => {
             />
           </svg>
         </div>
-        <a href="#" className="text-gray-700 hover:underline">
-          Login
-        </a>
-        <div className="cursor-pointer">
-          <img
-            src="assets/images/sell-button.png"
-            alt="sell"
-            width={80}
-            className="rounded-full"
-          />
-          <span className="absolute top-5 right-[4.1rem]">+ Sell</span>
+        <div className="text-gray-700 hover:underline cursor-pointer w-28 truncate flex justify-center">
+          {user ? (
+            <span
+              className="cursor-pointer ml-6"
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              onClick={handleLogout}
+            >
+              {hovered ? "Logout" : user.displayName}
+            </span>
+          ) : (
+            <Link to="/signin" className="ml-7">
+              Login
+            </Link>
+          )}
         </div>
+      </div>
+      <div className="cursor-pointer">
+        <img
+          src="assets/images/sell-button.png"
+          alt="sell"
+          width={80}
+          className="rounded-full"
+        />
+        <span className="absolute top-5 right-[2.9rem]">+ Sell</span>
       </div>
     </div>
   );
