@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FirebaseContext } from "../context/FirebaseContext";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { auth } = useContext(FirebaseContext)
+  const navigate = useNavigate()
 
   const validateForm = () => {
     if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
@@ -26,7 +32,14 @@ function SignIn() {
 
   const handleFormSubmit = () => {
     if (validateForm()) {
-      console.log(email, password)
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          navigate("/")
+        })
+        .catch((error) => {
+          toast.error("Invalid email or password.");
+          console.log("error while login in :", error)
+        })
     }
   }
 
@@ -76,9 +89,9 @@ function SignIn() {
               <div className="flex justify-center">
                 <p className="text-sm font-light text-gray-500 ">
                   New in OLX? &nbsp;
-                  <a className="font-medium text-primary-600 hover:underline cursor-pointer">
+                  <Link to="/signup" className="font-medium text-primary-600 hover:underline cursor-pointer">
                     SignUp here
-                  </a>
+                  </Link>
                 </p>
               </div>
             </div>
