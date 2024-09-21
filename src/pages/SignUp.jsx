@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useContext } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FirebaseContext } from "../context/FirebaseContext";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
 
 function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
+
+  const { auth } = useContext(FirebaseContext)
+  const navigate = useNavigate()
 
   const validateForm = () => {
     if (name.trim() == "") {
@@ -44,7 +50,13 @@ function SignUp() {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     if (validateForm()) {
-      console.log(name, email, number, password)
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          navigate("/signin")
+        })
+        .catch((error) => {
+          console.log("error while creating user :", error)
+        })
     }
   };
 
@@ -148,9 +160,9 @@ function SignUp() {
               </button>
               <p className="text-sm font-light text-gray-500 flex justify-center">
                 Already have an account? &nbsp;
-                <a className="font-medium text-primary-600 hover:underline cursor-pointer">
+                <Link to="/signin" className="font-medium text-primary-600 hover:underline cursor-pointer">
                   Login here
-                </a>
+                </Link>
               </p>
             </form>
           </div>
