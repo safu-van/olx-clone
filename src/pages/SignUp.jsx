@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FirebaseContext } from "../context/FirebaseContext";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 
 function SignUp() {
@@ -11,7 +12,7 @@ function SignUp() {
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
 
-  const { auth } = useContext(FirebaseContext)
+  const { auth, firestore } = useContext(FirebaseContext)
   const navigate = useNavigate()
 
   const validateForm = () => {
@@ -51,8 +52,18 @@ function SignUp() {
     event.preventDefault();
     if (validateForm()) {
       createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          navigate("/signin")
+        .then((response) => {
+          setDoc(doc(firestore, "users", response.user.uid), {
+            user_id:response.user.uid,
+            name:name,
+            phone_number:number
+          })
+            .then(() => {
+              navigate("/signin")
+            })
+            .catch((error) => {
+              console.log("error while uploading data to firestore :", error)
+            })
         })
         .catch((error) => {
           console.log("error while creating user :", error)
