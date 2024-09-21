@@ -1,6 +1,48 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { AuthenticationContext, FirebaseContext } from "../context/Context";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { setDoc, doc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 function AddProduct() {
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
+
+  const { firestore, storage } = useContext(FirebaseContext);
+  const { user } = useContext(AuthenticationContext);
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    const storageRef = ref(storage, `product_images/${image.name}`);
+
+    uploadBytes(storageRef, image)
+      .then(() => {
+        getDownloadURL(storageRef)
+          .then((url) => {
+            setDoc(doc(firestore, "products", user.uid), {
+              name: name,
+              price: price,
+              category: category,
+              description: description,
+              image: url,
+              user_id: user.uid,
+            })
+              .then(() => {
+                navigate("/")
+              })
+          })
+          .catch((error) => {
+            console.error("Error getting image URL:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
+  };
+
   return (
     <div className="p-4 w-full sm:max-w-[70%] text-left max-h-full">
       <div className="bg-white rounded-lg shadow">
@@ -8,7 +50,10 @@ function AddProduct() {
           <h3 className="text-lg font-semibold text-gray-900 ">
             Enter Product Details
           </h3>
-          <button className="text-white inline-flex items-center bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+          <button
+            onClick={handleSubmit}
+            className="text-white inline-flex items-center bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+          >
             <svg
               className="me-1 -ms-1 w-5 h-5"
               fill="currentColor"
@@ -54,6 +99,7 @@ function AddProduct() {
                 <input
                   id="dropzone-file"
                   accept="image/*"
+                  onChange={(event) => setImage(event.target.files[0])}
                   type="file"
                   className="hidden"
                 />
@@ -62,7 +108,11 @@ function AddProduct() {
 
             <img
               className="col-span-2 sm:col-span-1 w-full max-h-[250px] object-contain rounded-lg shadow-xl "
-              src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Photo-Image-Icon-Graphics-10388619-1-1-580x386.jpg"
+              src={
+                image
+                  ? URL.createObjectURL(image)
+                  : "https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Photo-Image-Icon-Graphics-10388619-1-1-580x386.jpg"
+              }
               alt="image description"
             />
 
@@ -74,6 +124,8 @@ function AddProduct() {
                 type="text"
                 name="name"
                 id="name"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                 placeholder="product name"
                 required
@@ -87,6 +139,8 @@ function AddProduct() {
                 type="number"
                 name="price"
                 id="price"
+                value={price}
+                onChange={(event) => setPrice(event.target.value)}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                 placeholder="$999"
                 required
@@ -98,9 +152,11 @@ function AddProduct() {
               </label>
               <select
                 id="category"
+                value={category} // Controlled component
+                onChange={(event) => setCategory(event.target.value)} // Set state on change
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
               >
-                <option selected disabled>
+                <option value="" disabled>
                   Select category
                 </option>
                 <option value="Vehicle">Vehicle</option>
@@ -117,6 +173,8 @@ function AddProduct() {
               <textarea
                 id="description"
                 rows="4"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
                 placeholder="Write product description..."
               ></textarea>

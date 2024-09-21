@@ -5,20 +5,20 @@ import { AuthenticationContext, FirebaseContext } from "../context/Context";
 
 const Navbar = () => {
   const [hovered, setHovered] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { user } = useContext(AuthenticationContext);
-  const { auth } = useContext(FirebaseContext)
+  const { auth } = useContext(FirebaseContext);
 
-  const handleLogout = () =>{
+  const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        navigate("/signin")
+        navigate("/signin");
       })
       .catch((error) => {
-        console.log("error while logout :", error)
-      })
-  }
+        console.log("error while logout :", error);
+      });
+  };
 
   return (
     <div className="bg-gray-100 py-2 px-4 flex items-center shadow-md h-16 fixed top-0 left-0 w-full z-50">
@@ -70,13 +70,15 @@ const Navbar = () => {
         </div>
       </div>
       <div className="cursor-pointer">
-        <img
-          src="assets/images/sell-button.png"
-          alt="sell"
-          width={80}
-          className="rounded-full"
-        />
-        <span className="absolute top-5 right-[2.9rem]">+ Sell</span>
+        <Link to="/addproduct">
+          <img
+            src="assets/images/sell-button.png"
+            alt="sell"
+            width={80}
+            className="rounded-full"
+          />
+          <span className="absolute top-5 right-[2.9rem]">+ Sell</span>
+        </Link>
       </div>
     </div>
   );
