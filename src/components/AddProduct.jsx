@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AuthenticationContext, FirebaseContext } from "../context/Context";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { setDoc, doc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 function AddProduct() {
@@ -22,7 +22,7 @@ function AddProduct() {
       .then(() => {
         getDownloadURL(storageRef)
           .then((url) => {
-            setDoc(doc(firestore, "products", user.uid), {
+            addDoc(collection(firestore, "products"), {
               name: name,
               price: price,
               category: category,
@@ -160,10 +160,10 @@ function AddProduct() {
                   Select category
                 </option>
                 <option value="Vehicle">Vehicle</option>
-                <option value="Electronic">Home Appliances</option>
+                <option value="Home Appliances">Home Appliances</option>
                 <option value="Phone">Phone</option>
                 <option value="Laptop and pc">Laptop and pc</option>
-                <option value="Not defined">Other</option>
+                <option value="Other">Other</option>
               </select>
             </div>
             <div className="col-span-2">
