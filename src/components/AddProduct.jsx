@@ -3,44 +3,91 @@ import { AuthenticationContext, FirebaseContext } from "../context/Context";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import toast, { Toaster } from "react-hot-toast";
 
 function AddProduct() {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
-
   const { firestore, storage } = useContext(FirebaseContext);
   const { user } = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    const storageRef = ref(storage, `product_images/${image.name}`);
+  const [imagePreview, setImagePreview] = useState(null);
 
-    uploadBytes(storageRef, image)
-      .then(() => {
-        getDownloadURL(storageRef)
-          .then((url) => {
-            addDoc(collection(firestore, "products"), {
-              name: name,
-              price: price,
-              category: category,
-              description: description,
-              image: url,
-              user_id: user.uid,
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      price: "",
+      category: "",
+      description: "",
+      image: null,
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .trim("Enter the Product Name")
+        .required("Enter the Product Name"),
+
+      price: Yup.number()
+        .required("Enter the Price")
+        .positive("Price must be greater than zero")
+        .typeError("Price must be a number"),
+
+      category: Yup.string().required("Select a Category"),
+
+      description: Yup.string()
+        .trim("Enter the Description")
+        .required("Enter the Description")
+        .min(20, "Description must be at least 20 characters long"),
+
+      image: Yup.mixed()
+        .required("Image is required")
+        .test("fileType", "Unsupported file format", (value) => {
+          return (
+            value &&
+            ["image/jpeg", "image/png", "image/gif"].includes(value.type)
+          );
+        }),
+    }),
+    onSubmit: (values) => {
+      const storageRef = ref(storage, `product_images/${values.image.name}`);
+
+      uploadBytes(storageRef, values.image)
+        .then(() => {
+          getDownloadURL(storageRef)
+            .then((url) => {
+              addDoc(collection(firestore, "products"), {
+                name: values.name,
+                price: values.price,
+                category: values.category,
+                description: values.description,
+                image: url,
+                user_id: user.uid,
+              }).then(() => {
+                toast.success("Product added successfully", {
+                  position: "top-right",
+                  duration: 1500,
+                });
+                setTimeout(() => {
+                  navigate("/");
+                }, 1500);
+              });
             })
-              .then(() => {
-                navigate("/")
-              })
-          })
-          .catch((error) => {
-            console.error("Error getting image URL:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error uploading image:", error);
-      });
+            .catch((error) => {
+              console.error("Error getting image URL:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+        });
+    },
+  });
+
+  const handleImageChange = (event) => {
+    const imageFile = event.target.files[0];
+    if (imageFile) {
+      formik.setFieldValue("image", imageFile);
+      setImagePreview(imageFile);
+    }
   };
 
   return (
@@ -51,8 +98,9 @@ function AddProduct() {
             Enter Product Details
           </h3>
           <button
-            onClick={handleSubmit}
+            onClick={formik.handleSubmit}
             className="text-white inline-flex items-center bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+            type="button"
           >
             <svg
               className="me-1 -ms-1 w-5 h-5"
@@ -72,7 +120,13 @@ function AddProduct() {
         <div className="p-4 md:p-5">
           <div className="grid gap-4 mb-4 grid-cols-2">
             <div className="col-span-2 sm:col-span-1 flex items-center justify-center w-full">
-              <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+              <label
+                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                style={{
+                  borderColor:
+                    formik.errors.image && formik.touched.image ? "red" : "",
+                }}
+              >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
                     className="w-8 h-8 mb-4 text-gray-500 "
@@ -93,13 +147,15 @@ function AddProduct() {
                     <span className="font-semibold">Click to upload</span>
                   </p>
                   <p className="text-xs text-center text-gray-500 ">
-                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                    PNG, JPG or GIF (MAX. 800x400px)
                   </p>
                 </div>
                 <input
                   id="dropzone-file"
+                  name="image"
                   accept="image/*"
-                  onChange={(event) => setImage(event.target.files[0])}
+                  onBlur={formik.handleBlur}
+                  onChange={handleImageChange}
                   type="file"
                   className="hidden"
                 />
@@ -109,12 +165,17 @@ function AddProduct() {
             <img
               className="col-span-2 sm:col-span-1 w-full max-h-[250px] object-contain rounded-lg shadow-xl "
               src={
-                image
-                  ? URL.createObjectURL(image)
+                imagePreview
+                  ? URL.createObjectURL(imagePreview)
                   : "https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Photo-Image-Icon-Graphics-10388619-1-1-580x386.jpg"
               }
-              alt="image description"
+              alt="product image"
             />
+            {formik.errors.image && formik.touched.image ? (
+              <p className="text-xs text-red-500 flex items-center">
+                {formik.errors.image}
+              </p>
+            ) : null}
 
             <div className="col-span-2">
               <label className="block mb-2 text-sm font-medium text-gray-900 ">
@@ -124,12 +185,21 @@ function AddProduct() {
                 type="text"
                 name="name"
                 id="name"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                 placeholder="product name"
-                required
+                style={{
+                  borderColor:
+                    formik.errors.name && formik.touched.name ? "red" : "",
+                }}
               />
+              {formik.errors.name && formik.touched.name ? (
+                <p className="text-xs text-red-500 flex items-center mt-2">
+                  {formik.errors.name}
+                </p>
+              ) : null}
             </div>
             <div className="col-span-2 sm:col-span-1">
               <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -139,12 +209,21 @@ function AddProduct() {
                 type="number"
                 name="price"
                 id="price"
-                value={price}
-                onChange={(event) => setPrice(event.target.value)}
+                value={formik.values.price}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                placeholder="$999"
-                required
+                placeholder="₹999"
+                style={{
+                  borderColor:
+                    formik.errors.price && formik.touched.price ? "red" : "",
+                }}
               />
+              {formik.errors.price && formik.touched.price ? (
+                <p className="text-xs text-red-500 flex items-center mt-2">
+                  {formik.errors.price}
+                </p>
+              ) : null}
             </div>
             <div className="col-span-2 sm:col-span-1">
               <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -152,9 +231,17 @@ function AddProduct() {
               </label>
               <select
                 id="category"
-                value={category} // Controlled component
-                onChange={(event) => setCategory(event.target.value)} // Set state on change
+                name="category"
+                value={formik.values.category}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
+                style={{
+                  borderColor:
+                    formik.errors.category && formik.touched.category
+                      ? "red"
+                      : "",
+                }}
               >
                 <option value="" disabled>
                   Select category
@@ -165,6 +252,11 @@ function AddProduct() {
                 <option value="Laptop and pc">Laptop and pc</option>
                 <option value="Other">Other</option>
               </select>
+              {formik.errors.category && formik.touched.category ? (
+                <p className="text-xs text-red-500 flex items-center mt-2">
+                  {formik.errors.category}
+                </p>
+              ) : null}
             </div>
             <div className="col-span-2">
               <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -172,16 +264,30 @@ function AddProduct() {
               </label>
               <textarea
                 id="description"
+                name="description"
                 rows="4"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
                 placeholder="Write product description..."
+                style={{
+                  borderColor:
+                    formik.errors.description && formik.touched.description
+                      ? "red"
+                      : "",
+                }}
               ></textarea>
+              {formik.errors.description && formik.touched.description ? (
+                <p className="text-xs text-red-500 flex items-center mt-2">
+                  {formik.errors.description}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }
