@@ -1,81 +1,90 @@
-import React, { useState, useContext } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useContext } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { FirebaseContext } from "../context/Context";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 function SignUp() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [number, setNumber] = useState("");
-  const [password, setPassword] = useState("");
+  const { auth, firestore } = useContext(FirebaseContext);
+  const navigate = useNavigate();
 
-  const { auth, firestore } = useContext(FirebaseContext)
-  const navigate = useNavigate()
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      number: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .trim("Enter your Name")
+        .matches(/^[A-Za-z\s]+$/, "Enter a valid Name")
+        .required("Enter your Name"),
 
-  const validateForm = () => {
-    if (name.trim() == "") {
-      toast.error("Enter a valid Name");
-      return false;
-    } else if (!/^[A-Za-z\s]+$/.test(name)) {
-      toast.error("Enter a valid Name");
-      return false;
-    }
+      email: Yup.string()
+        .email("Enter a valid Email")
+        .matches(
+          /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
+          "Enter a valid Email"
+        )
+        .required("Enter your Email"),
 
-    if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
-      toast.error("Enter a valid Email");
-      return false;
-    }
+      number: Yup.string()
+        .matches(/^\d{10}$/, "Enter a valid Phone Number")
+        .required("Enter your Phone Number"),
 
-    if (!/^\d{10}$/.test(number)) {
-      toast.error("Enter a valid Phone Number");
-      return false;
-    }
-
-    if (
-      !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(
-        password
-      )
-    ) {
-      toast.error(
-        "Password must be at least 8 characters, contain 1 uppercase letter, 1 number, and 1 special character"
-      );
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    if (validateForm()) {
-      createUserWithEmailAndPassword(auth, email, password)
-      .then((response) => {
-        updateProfile(response.user, { displayName: name })
-          .then(() => {
-            setDoc(doc(firestore, "users", response.user.uid), {
-              user_id: response.user.uid,
-              name: name,
-              phone_number: number,
-            })
-              .then(() => {
-                navigate("/signin");
+      password: Yup.string()
+        .matches(
+          /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+          "Password must be at least 8 characters, contain 1 uppercase letter, 1 number, and 1 special character"
+        )
+        .required("Enter a Password"),
+    }),
+    onSubmit: (values) => {
+      createUserWithEmailAndPassword(auth, values.email, values.password)
+        .then((response) => {
+          updateProfile(response.user, { displayName: values.name })
+            .then(() => {
+              setDoc(doc(firestore, "users", response.user.uid), {
+                user_id: response.user.uid,
+                name: values.name,
+                phone_number: values.number,
               })
-              .catch((error) => {
-                console.log("Error while uploading data to Firestore:", error);
-              });
-          })
-          .catch((error) => {
-            console.log("Error while updating profile:", error);
-          });
-      })
-      .catch((error) => {
-        console.log("Error while creating user:", error);
-      });
-    }
-  };
+                .then(() => {
+                  toast.success("Account created successfully", {
+                    position: "top-right",
+                    duration: 2000,
+                  });
+                  setTimeout(() => {
+                    navigate("/signin");
+                  }, 2000);
+                })
+                .catch((error) => {
+                  console.log(
+                    "Error while uploading data to Firestore:",
+                    error
+                  );
+                });
+            })
+            .catch((error) => {
+              console.log("Error while updating profile:", error);
+            });
+        })
+        .catch((error) => {
+          if (error.code === "auth/email-already-in-use") {
+            toast.error("Email already exists.", {
+              position: "top-right",
+              duration: 3000,
+            });
+          } else {
+            console.log("Error while creating user:", error.message);
+          }
+        });
+    },
+  });
 
   return (
     <section className="bg-gray-50">
@@ -88,7 +97,7 @@ function SignUp() {
             </h1>
             <form
               className="space-y-4 md:space-y-6 text-left"
-              onSubmit={handleFormSubmit}
+              onSubmit={formik.handleSubmit}
             >
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 ">
@@ -98,27 +107,45 @@ function SignUp() {
                   type="text"
                   name="name"
                   id="name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 "
                   placeholder="name"
-                  required
+                  style={{
+                    borderColor:
+                      formik.errors.name && formik.touched.name ? "red" : "",
+                  }}
                 />
+                {formik.errors.name && formik.touched.name ? (
+                  <p className="text-xs text-red-500 flex items-center mt-2">
+                    {formik.errors.name}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 ">
                   Email
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   id="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="example@example.com"
-                  required
+                  style={{
+                    borderColor:
+                      formik.errors.email && formik.touched.email ? "red" : "",
+                  }}
                 />
+                {formik.errors.email && formik.touched.email ? (
+                  <p className="text-xs text-red-500 flex items-center mt-2">
+                    {formik.errors.email}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 ">
@@ -128,12 +155,23 @@ function SignUp() {
                   type="number"
                   name="number"
                   id="number"
-                  value={number}
-                  onChange={(event) => setNumber(event.target.value)}
+                  value={formik.values.number}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="000-000-000"
-                  required
+                  style={{
+                    borderColor:
+                      formik.errors.number && formik.touched.number
+                        ? "red"
+                        : "",
+                  }}
                 />
+                {formik.errors.number && formik.touched.number ? (
+                  <p className="text-xs text-red-500 flex items-center mt-2">
+                    {formik.errors.number}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 ">
@@ -143,31 +181,23 @@ function SignUp() {
                   type="password"
                   name="password"
                   id="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="password"
-                  required
+                  style={{
+                    borderColor:
+                      formik.errors.password && formik.touched.password
+                        ? "red"
+                        : "",
+                  }}
                 />
-              </div>
-              <div className="flex items-start pl-0.5">
-                <div className="flex items-center h-5">
-                  <input
-                    id="terms"
-                    aria-describedby="terms"
-                    type="checkbox"
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 "
-                    required
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label className="font-light text-gray-500 ">
-                    I accept the&nbsp;
-                    <a className="font-medium text-primary-600 hover:underline cursor-pointer">
-                      Terms and Conditions
-                    </a>
-                  </label>
-                </div>
+                {formik.errors.password && formik.touched.password ? (
+                  <p className="text-xs text-red-500 flex items-center mt-2">
+                    {formik.errors.password}
+                  </p>
+                ) : null}
               </div>
               <button
                 type="submit"
@@ -177,7 +207,10 @@ function SignUp() {
               </button>
               <p className="text-sm font-light text-gray-500 flex justify-center">
                 Already have an account? &nbsp;
-                <Link to="/signin" className="font-medium text-primary-600 hover:underline cursor-pointer">
+                <Link
+                  to="/signin"
+                  className="font-medium text-primary-600 hover:underline cursor-pointer"
+                >
                   Login here
                 </Link>
               </p>
@@ -185,7 +218,7 @@ function SignUp() {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <Toaster />
     </section>
   );
 }

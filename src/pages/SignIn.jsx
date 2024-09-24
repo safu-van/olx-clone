@@ -1,47 +1,53 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { FirebaseContext } from "../context/Context";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import toast, { Toaster } from "react-hot-toast";
 
 function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { auth } = useContext(FirebaseContext);
+  const navigate = useNavigate();
 
-  const { auth } = useContext(FirebaseContext)
-  const navigate = useNavigate()
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("Invalid Email")
+        .matches(
+          /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
+          "Invalid Email"
+        )
+        .required("Enter your Email"),
 
-  const validateForm = () => {
-    if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
-      toast.error("Invalid email or password.");
-      return false;
-    }
-
-    if (
-      !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(
-        password
-      )
-    ) {
-      toast.error("Invalid email or password.");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleFormSubmit = () => {
-    if (validateForm()) {
-      signInWithEmailAndPassword(auth, email, password)
+      password: Yup.string()
+        .matches(
+          /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+          "Invalid Password"
+        )
+        .required("Enter a Password"),
+    }),
+    onSubmit: (values) => {
+      signInWithEmailAndPassword(auth, values.email, values.password)
         .then(() => {
-          navigate("/")
+          navigate("/");
         })
         .catch((error) => {
-          toast.error("Invalid email or password.");
-          console.log("error while login in :", error)
-        })
-    }
-  }
+          if (error.code === "auth/invalid-credential") {
+            toast.error("Invalid email or password.", {
+              position: "top-right",
+              duration: 3000,
+            });
+          } else {
+            console.log("error while login in :", error);
+          }
+        });
+    },
+  });
 
   return (
     <section className="bg-gray-50">
@@ -61,12 +67,21 @@ function SignIn() {
                   type="email"
                   name="email"
                   id="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="example@example.com"
-                  required
+                  style={{
+                    borderColor:
+                      formik.errors.email && formik.touched.email ? "red" : "",
+                  }}
                 />
+                {formik.errors.email && formik.touched.email ? (
+                  <p className="text-xs text-red-500 flex items-center mt-2">
+                    {formik.errors.email}
+                  </p>
+                ) : null}
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -76,20 +91,38 @@ function SignIn() {
                   type="password"
                   name="password"
                   id="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   placeholder="password"
-                  required
+                  style={{
+                    borderColor:
+                      formik.errors.password && formik.touched.password
+                        ? "red"
+                        : "",
+                  }}
                 />
+                {formik.errors.password && formik.touched.password ? (
+                  <p className="text-xs text-red-500 flex items-center mt-2">
+                    {formik.errors.password}
+                  </p>
+                ) : null}
               </div>
-              <button onClick={handleFormSubmit} className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+              <button
+                onClick={formik.handleSubmit}
+                type="button"
+                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+              >
                 Login
               </button>
               <div className="flex justify-center">
                 <p className="text-sm font-light text-gray-500 ">
                   New in OLX? &nbsp;
-                  <Link to="/signup" className="font-medium text-primary-600 hover:underline cursor-pointer">
+                  <Link
+                    to="/signup"
+                    className="font-medium text-primary-600 hover:underline cursor-pointer"
+                  >
                     SignUp here
                   </Link>
                 </p>
@@ -98,7 +131,7 @@ function SignIn() {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <Toaster />
     </section>
   );
 }
