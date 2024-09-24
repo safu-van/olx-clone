@@ -52,6 +52,7 @@ function SignUp() {
                 user_id: response.user.uid,
                 name: values.name,
                 phone_number: values.number,
+                email: values.email,
               })
                 .then(() => {
                   toast.success("Account created successfully", {

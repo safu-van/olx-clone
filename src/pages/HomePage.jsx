@@ -6,9 +6,8 @@ import { FirebaseContext } from "../context/Context";
 import { collection, getDocs } from "firebase/firestore";
 
 function HomePage() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState();
   const { firestore } = useContext(FirebaseContext);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const productsCollection = collection(firestore, "products");
@@ -21,7 +20,6 @@ function HomePage() {
           };
         });
         setProducts(productsArray);
-        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -36,7 +34,17 @@ function HomePage() {
           <span className="text-xl pl-3">Products</span>
         </div>
         <div className="flex flex-wrap gap-2 m-5 min-h-[27rem]">
-          {loading ? (
+          {products ? (
+            products.length > 0 ? (
+              products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="w-full flex justify-center items-center text-gray-500 mt-5">
+                No products available
+              </div>
+            )
+          ) : (
             <div className="w-full flex justify-center items-center">
               <svg
                 aria-hidden="true"
@@ -56,16 +64,6 @@ function HomePage() {
               </svg>
               <span className="sr-only">Loading...</span>
             </div>
-          ) : (
-            products.length > 0 ? (
-              products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))
-            ) : (
-              <div className="w-full flex justify-center items-center text-gray-500 mt-5">
-                No products available
-              </div>
-            )
           )}
         </div>
       </div>

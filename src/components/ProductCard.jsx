@@ -1,8 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    localStorage.setItem('product', JSON.stringify(product));
+    navigate("/view-product")
+  }
+
   return (
-    <div className="p-5">
+    <div className="p-5 cursor-pointer" onClick={handleClick}>
       <div className="border border-gray-400 w-56 rounded-sm">
         <div className="w-full p-2">
           <div className="w-full h-48">

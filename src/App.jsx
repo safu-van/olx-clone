@@ -5,6 +5,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import HomePage from "./pages/HomePage";
 import SellPage from "./pages/SellPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
 import { AuthenticationContext, FirebaseContext } from "./context/Context";
 
 
@@ -16,7 +17,7 @@ function App() {
     onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
     })
-  })
+  }, [])
 
   return (
     <Router>
@@ -25,6 +26,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/addproduct" element={<SellPage />} />
+        <Route path="/view-product" element={<ProductDetailPage />} />
       </Routes>
     </Router>
   );
