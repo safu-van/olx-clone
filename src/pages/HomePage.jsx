@@ -57,9 +57,15 @@ function HomePage() {
               <span className="sr-only">Loading...</span>
             </div>
           ) : (
-            products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))
+            products.length > 0 ? (
+              products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="w-full flex justify-center items-center text-gray-500 mt-5">
+                No products available
+              </div>
+            )
           )}
         </div>
       </div>
