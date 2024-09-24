@@ -3,16 +3,16 @@ import React from "react";
 const ProductCard = ({ product }) => {
   return (
     <div className="p-5">
-      <div className="border border-gray-400 w-72 rounded-sm">
+      <div className="border border-gray-400 w-56 rounded-sm">
         <div className="w-full p-2">
-          <div className="w-full h-52">
+          <div className="w-full h-48">
             <img
               src={product.image}
               alt="Product Image"
               className="w-full h-full object-contain"
             />
           </div>
-          <div className="p-4">
+          <div className="px-3 pt-3">
             <div>
               <span className="text-xl font-extrabold">₹{product.price}</span>
             </div>

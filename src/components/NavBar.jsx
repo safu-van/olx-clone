@@ -22,21 +22,33 @@ const Navbar = () => {
 
   return (
     <div className="bg-gray-100 py-2 px-4 flex items-center shadow-md h-16 fixed top-0 left-0 w-full z-50">
-      <div className="flex items-center space-x-3">
-        <div>
+      <div className="flex items-center justify-center">
+        <div className="mx-3">
           <Link to="/">
             <img src="assets/images/logo.png" alt="logo" width={40} />
           </Link>
         </div>
       </div>
-      <div className="flex mx-4 max-w-4xl w-full ml-10">
+      <div className="flex mx-4 max-w-4xl w-full ">
         <input
           type="text"
           className="w-full border-2 border-gray-950 rounded-sm px-4 py-2 text-gray-700"
           placeholder="Find Cars, Mobile Phones and more..."
         />
-        <div className="w-5 absolute h-10 flex justify-center items-center left-[60rem] cursor-pointer">
-          <img src="assets/images/search.png" alt="search" />
+        <div className="w-12 absolute h-[2.6rem] flex justify-center items-center left-[59rem] cursor-pointer bg-gray-900">
+          <svg
+            width="24px"
+            height="24px"
+            viewBox="0 0 1024 1024"
+            data-aut-id="icon"
+            fill="white"
+            fill-rule="evenodd"
+          >
+            <path
+              class="rui-o3KKi"
+              d="M448 725.333c-152.917 0-277.333-124.416-277.333-277.333s124.416-277.333 277.333-277.333c152.917 0 277.333 124.416 277.333 277.333s-124.416 277.333-277.333 277.333v0zM884.437 824.107v0.021l-151.915-151.936c48.768-61.781 78.144-139.541 78.144-224.192 0-199.979-162.688-362.667-362.667-362.667s-362.667 162.688-362.667 362.667c0 199.979 162.688 362.667 362.667 362.667 84.629 0 162.411-29.376 224.171-78.144l206.144 206.144h60.352v-60.331l-54.229-54.229z"
+            ></path>
+          </svg>
         </div>
       </div>
       <div className="flex items-center ml-11 w-56">
