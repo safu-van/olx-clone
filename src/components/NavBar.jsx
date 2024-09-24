@@ -24,7 +24,9 @@ const Navbar = () => {
     <div className="bg-gray-100 py-2 px-4 flex items-center shadow-md h-16 fixed top-0 left-0 w-full z-50">
       <div className="flex items-center space-x-3">
         <div>
-          <img src="assets/images/logo.png" alt="logo" width={40} />
+          <Link to="/">
+            <img src="assets/images/logo.png" alt="logo" width={40} />
+          </Link>
         </div>
       </div>
       <div className="flex mx-4 max-w-4xl w-full ml-10">
@@ -33,9 +35,12 @@ const Navbar = () => {
           className="w-full border-2 border-gray-950 rounded-sm px-4 py-2 text-gray-700"
           placeholder="Find Cars, Mobile Phones and more..."
         />
+        <div className="w-5 absolute h-10 flex justify-center items-center left-[60rem] cursor-pointer">
+          <img src="assets/images/search.png" alt="search" />
+        </div>
       </div>
       <div className="flex items-center ml-11 w-56">
-        <div className="flex items-center space-x-1 text-gray-700">
+        <div className="flex items-center space-x-1 text-gray-700 cursor-pointer">
           <span>ENGLISH</span>
           <svg
             className="w-4 h-4 text-gray-400"
