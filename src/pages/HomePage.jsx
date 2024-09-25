@@ -33,7 +33,7 @@ function HomePage() {
         <div className="m-5 p-3 bg-gray-100 rounded-sm">
           <span className="text-xl pl-3">Products</span>
         </div>
-        <div className="flex flex-wrap gap-2 m-5 min-h-[27rem]">
+        <div className="flex flex-wrap gap-1 m-5 min-h-[25rem]">
           {products ? (
             products.length > 0 ? (
               products.map((product) => (

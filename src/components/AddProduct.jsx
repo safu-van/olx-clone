@@ -13,6 +13,7 @@ function AddProduct() {
   const navigate = useNavigate();
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -49,6 +50,7 @@ function AddProduct() {
         }),
     }),
     onSubmit: (values) => {
+      setIsSubmitting(true);
       const storageRef = ref(storage, `product_images/${values.image.name}`);
 
       uploadBytes(storageRef, values.image)
@@ -101,6 +103,7 @@ function AddProduct() {
             onClick={formik.handleSubmit}
             className="text-white inline-flex items-center bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
             type="button"
+            disabled={isSubmitting}
           >
             <svg
               className="me-1 -ms-1 w-5 h-5"
@@ -114,7 +117,7 @@ function AddProduct() {
                 clipRule="evenodd"
               ></path>
             </svg>
-            Add
+            {isSubmitting ? 'Adding...' : 'Add'}
           </button>
         </div>
         <div className="p-4 md:p-5">
