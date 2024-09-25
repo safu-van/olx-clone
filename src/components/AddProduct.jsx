@@ -5,7 +5,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 function AddProduct() {
   const { firestore, storage } = useContext(FirebaseContext);
@@ -66,12 +66,9 @@ function AddProduct() {
                 user_id: user.uid,
               }).then(() => {
                 toast.success("Product added successfully", {
-                  position: "top-right",
-                  duration: 1500,
+                  duration: 2000,
                 });
-                setTimeout(() => {
-                  navigate("/");
-                }, 1500);
+                navigate("/");
               });
             })
             .catch((error) => {
@@ -290,7 +287,6 @@ function AddProduct() {
           </div>
         </div>
       </div>
-      <Toaster />
     </div>
   );
 }

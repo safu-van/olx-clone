@@ -1,14 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseContext } from "../context/Context";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 function SignIn() {
   const { auth } = useContext(FirebaseContext);
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -32,14 +33,19 @@ function SignIn() {
         .required("Enter a Password"),
     }),
     onSubmit: (values) => {
+      setIsSubmitting(true)
+
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then(() => {
+          toast.success("Logged In Successfully", {
+            duration: 2500,
+          });
           navigate("/");
         })
         .catch((error) => {
+          setIsSubmitting(false)
           if (error.code === "auth/invalid-credential") {
             toast.error("Invalid email or password.", {
-              position: "top-right",
               duration: 3000,
             });
           } else {
@@ -113,8 +119,9 @@ function SignIn() {
                 onClick={formik.handleSubmit}
                 type="button"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                disabled={isSubmitting}
               >
-                Login
+                {isSubmitting ? "Please Wait..." : "Login"}
               </button>
               <div className="flex justify-center">
                 <p className="text-sm font-light text-gray-500 ">
@@ -131,7 +138,6 @@ function SignIn() {
           </div>
         </div>
       </div>
-      <Toaster />
     </section>
   );
 }

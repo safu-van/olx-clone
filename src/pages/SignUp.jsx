@@ -1,15 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { FirebaseContext } from "../context/Context";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 function SignUp() {
   const { auth, firestore } = useContext(FirebaseContext);
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -44,6 +45,8 @@ function SignUp() {
         .required("Enter a Password"),
     }),
     onSubmit: (values) => {
+      setIsSubmitting(true);
+
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then((response) => {
           updateProfile(response.user, { displayName: values.name })
@@ -56,12 +59,9 @@ function SignUp() {
               })
                 .then(() => {
                   toast.success("Account created successfully", {
-                    position: "top-right",
-                    duration: 2000,
+                    duration: 2500,
                   });
-                  setTimeout(() => {
-                    navigate("/signin");
-                  }, 2000);
+                  navigate("/signin");
                 })
                 .catch((error) => {
                   console.log(
@@ -75,9 +75,9 @@ function SignUp() {
             });
         })
         .catch((error) => {
+          setIsSubmitting(false)
           if (error.code === "auth/email-already-in-use") {
             toast.error("Email already exists.", {
-              position: "top-right",
               duration: 3000,
             });
           } else {
@@ -203,8 +203,9 @@ function SignUp() {
               <button
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                disabled={isSubmitting}
               >
-                Create an account
+                {isSubmitting ? "Creating Account..." : "Create an Account"}
               </button>
               <p className="text-sm font-light text-gray-500 flex justify-center">
                 Already have an account? &nbsp;
@@ -219,7 +220,6 @@ function SignUp() {
           </div>
         </div>
       </div>
-      <Toaster />
     </section>
   );
 }

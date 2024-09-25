@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { FirebaseContext, AuthContext } from "./context/Context.jsx"
 import { auth, firestore, storage } from "./firebase/config.js"
+import { Toaster } from "react-hot-toast";
 import App from "./App.jsx";
 import "./index.css";
 
@@ -12,5 +13,6 @@ createRoot(document.getElementById("root")).render(
         <App />
       </AuthContext>
     </FirebaseContext.Provider>
+    <Toaster position="top-right" />
   </StrictMode>
 );
