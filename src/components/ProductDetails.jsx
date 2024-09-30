@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FirebaseContext } from "../context/Context";
 import { doc, getDoc } from "firebase/firestore";
+import { useParams } from "react-router-dom";
 
 function ProductDetails() {
   const productData = JSON.parse(localStorage.getItem("product"));
   const { firestore } = useContext(FirebaseContext);
   const [sellerDetails, setSellerDetails] = useState();
+  const { productId } = useParams();
 
   useEffect(() => {
     const userDocRef = doc(firestore, "users", productData.user_id);
@@ -13,7 +15,7 @@ function ProductDetails() {
     getDoc(userDocRef)
       .then((userDoc) => {
         if (userDoc.exists()) {
-            setSellerDetails(userDoc.data());
+          setSellerDetails(userDoc.data());
         } else {
           console.log("No such user!");
         }
@@ -59,11 +61,11 @@ function ProductDetails() {
                   <span className="pl-2 mt-1">{sellerDetails.email}</span>
                 </>
               ) : (
-                <div role="status" class="max-w-sm animate-pulse">
-                  <div class="h-2 bg-gray-200 rounded-full w-48 mb-3 mt-3"></div>
-                  <div class="h-2 bg-gray-200 rounded-full w-48 mb-3 mt-4"></div>
-                  <div class="h-2 bg-gray-200 rounded-full w-48 mb-3 mt-4"></div>
-                  <span class="sr-only">Loading...</span>
+                <div role="status" className="max-w-sm animate-pulse">
+                  <div className="h-2 bg-gray-200 rounded-full w-48 mb-3 mt-3"></div>
+                  <div className="h-2 bg-gray-200 rounded-full w-48 mb-3 mt-4"></div>
+                  <div className="h-2 bg-gray-200 rounded-full w-48 mb-3 mt-4"></div>
+                  <span className="sr-only">Loading...</span>
                 </div>
               )}
             </div>

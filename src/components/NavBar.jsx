@@ -25,7 +25,7 @@ const Navbar = () => {
       <div className="flex items-center justify-center">
         <div className="mx-3">
           <Link to="/">
-            <img src="assets/images/logo.png" alt="logo" width={40} />
+            <img src="/assets/images/logo.png" alt="logo" width={40} />
           </Link>
         </div>
       </div>
@@ -87,9 +87,9 @@ const Navbar = () => {
         </div>
       </div>
       <div className="cursor-pointer">
-        <Link to="/addproduct">
+        <Link to="/add-product">
           <img
-            src="assets/images/sell-button.png"
+            src="/assets/images/sell-button.png"
             alt="sell"
             width={80}
             className="rounded-full"

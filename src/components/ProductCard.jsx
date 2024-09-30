@@ -5,8 +5,7 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate()
 
   const handleClick = () => {
-    localStorage.setItem('product', JSON.stringify(product));
-    navigate("/view-product")
+    navigate(`/view-product/${product.id}`)
   }
 
   return (
