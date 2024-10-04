@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { AuthenticationContext, FirebaseContext } from "../context/Context";
+import { FirebaseContext } from "../context/Context";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 
 function AddProduct() {
-  const { firestore, storage } = useContext(FirebaseContext);
-  const { user } = useContext(AuthenticationContext);
+  const { firestore, storage, user } = useContext(FirebaseContext);
   const navigate = useNavigate();
 
   const [imagePreview, setImagePreview] = useState(null);

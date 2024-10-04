@@ -1,14 +1,13 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { AuthenticationContext, FirebaseContext } from "../context/Context";
+import { FirebaseContext } from "../context/Context";
 
 const Navbar = () => {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
 
-  const { user } = useContext(AuthenticationContext);
-  const { auth } = useContext(FirebaseContext);
+  const { auth, user } = useContext(FirebaseContext);
 
   const handleLogout = () => {
     signOut(auth)

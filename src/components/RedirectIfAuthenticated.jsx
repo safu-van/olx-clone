@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { AuthenticationContext } from "../context/Context";
+import { FirebaseContext } from "../context/Context";
 import { Navigate, Outlet } from "react-router-dom";
 
 const RedirectIfAuthenticated = () => {
-  const { user } = useContext(AuthenticationContext);
+  const { user } = useContext(FirebaseContext);
 
   return user ? <Navigate to={"/"} /> : <Outlet />;
 };

@@ -1,14 +1,21 @@
 import { createContext, useState } from "react";
+import { auth, firestore, storage } from "../firebase/config"
 
 export const FirebaseContext = createContext(null)
-export const AuthenticationContext = createContext(null)
 
-export function AuthContext({ children }) {
+export function Context({children}) {
     const [user, setUser] = useState(null)
+    const ContextValues = {
+        user,
+        setUser,
+        auth,
+        firestore,
+        storage,
+    }
 
     return (
-        <AuthenticationContext.Provider value={{user, setUser}}>
+        <FirebaseContext.Provider value={ContextValues}>
             {children}
-        </AuthenticationContext.Provider>
+        </FirebaseContext.Provider>
     )
 }

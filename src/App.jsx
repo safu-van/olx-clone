@@ -6,13 +6,12 @@ import SignUp from "./pages/SignUp";
 import HomePage from "./pages/HomePage";
 import SellPage from "./pages/SellPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
-import { AuthenticationContext, FirebaseContext } from "./context/Context";
+import { FirebaseContext } from "./context/Context";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RedirectIfAuthenticated from "./components/RedirectIfAuthenticated";
 
 function App() {
-  const { setUser } = useContext(AuthenticationContext);
-  const { auth } = useContext(FirebaseContext);
+  const { auth, setUser } = useContext(FirebaseContext);
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
