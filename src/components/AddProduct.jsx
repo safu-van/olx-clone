@@ -113,7 +113,7 @@ function AddProduct() {
                 clipRule="evenodd"
               ></path>
             </svg>
-            {isSubmitting ? 'Adding...' : 'Add'}
+            {isSubmitting ? "Adding..." : "Add"}
           </button>
         </div>
         <div className="p-4 md:p-5">

@@ -75,7 +75,7 @@ function SignUp() {
             });
         })
         .catch((error) => {
-          setIsSubmitting(false)
+          setIsSubmitting(false);
           if (error.code === "auth/email-already-in-use") {
             toast.error("Email already exists.", {
               duration: 3000,

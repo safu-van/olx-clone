@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/view-product/${product.id}`)
-  }
+    navigate(`/view-product/${product.id}`);
+  };
 
   return (
     <div className="p-5 cursor-pointer" onClick={handleClick}>

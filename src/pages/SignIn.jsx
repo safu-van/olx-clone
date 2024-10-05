@@ -33,7 +33,7 @@ function SignIn() {
         .required("Enter a Password"),
     }),
     onSubmit: (values) => {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then(() => {
@@ -43,7 +43,7 @@ function SignIn() {
           navigate("/");
         })
         .catch((error) => {
-          setIsSubmitting(false)
+          setIsSubmitting(false);
           if (error.code === "auth/invalid-credential") {
             toast.error("Invalid email or password.", {
               duration: 3000,
