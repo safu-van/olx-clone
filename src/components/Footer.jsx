@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <div className="bg-gray-100 py-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               POPULAR LOCATIONS
@@ -65,19 +65,19 @@ const Footer = () => {
                 <i className="fab fa-twitter"></i>
               </a>
             </div>
-            <div className="flex space-x-4">
+            <div className="flex flex-wrap justify-start">
               <a href="#" className="w-32">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
                   alt="Google Play Store"
-                  className="h-12 w-32 object-contain"
+                  className="h-12 w-auto object-contain"
                 />
               </a>
               <a href="#" className="w-32">
                 <img
                   src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
                   alt="Apple Store"
-                  className="h-12 w-32 object-contain"
+                  className="h-10 mt-1 lg:h-12 w-auto object-contain"
                 />
               </a>
             </div>
