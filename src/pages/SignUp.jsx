@@ -88,20 +88,22 @@ function SignUp() {
   });
 
   return (
-    <section className="bg-gray-50">
+    <section className="bg-gray-50 min-h-screen">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <img src="assets/images/logo.png" className="h-10 mb-6" alt="Logo" />
-        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 ">
+        <Link to={"/"}>
+          <img src="assets/images/logo.png" className="h-10 mb-6" alt="Logo" />
+        </Link>
+        <div className="w-full bg-white rounded-lg shadow-lg md:mt-0 sm:max-w-md xl:max-w-lg">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold text-gray-900 md:text-2xl flex justify-center">
+            <h1 className="text-xl font-bold text-gray-900 md:text-2xl text-center">
               Sign Up
             </h1>
             <form
-              className="space-y-4 md:space-y-6 text-left"
+              className="space-y-4 md:space-y-6"
               onSubmit={formik.handleSubmit}
             >
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 ">
+                <label className="block mb-2 text-sm font-medium text-gray-900">
                   Name
                 </label>
                 <input
@@ -111,21 +113,22 @@ function SignUp() {
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 "
-                  placeholder="name"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="John Doe"
                   style={{
                     borderColor:
                       formik.errors.name && formik.touched.name ? "red" : "",
                   }}
                 />
                 {formik.errors.name && formik.touched.name ? (
-                  <p className="text-xs text-red-500 flex items-center mt-2">
+                  <p className="text-xs text-red-500 mt-2">
                     {formik.errors.name}
                   </p>
                 ) : null}
               </div>
+
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 ">
+                <label className="block mb-2 text-sm font-medium text-gray-900">
                   Email
                 </label>
                 <input
@@ -135,7 +138,7 @@ function SignUp() {
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="example@example.com"
                   style={{
                     borderColor:
@@ -143,13 +146,14 @@ function SignUp() {
                   }}
                 />
                 {formik.errors.email && formik.touched.email ? (
-                  <p className="text-xs text-red-500 flex items-center mt-2">
+                  <p className="text-xs text-red-500 mt-2">
                     {formik.errors.email}
                   </p>
                 ) : null}
               </div>
+
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 ">
+                <label className="block mb-2 text-sm font-medium text-gray-900">
                   Phone Number
                 </label>
                 <input
@@ -159,7 +163,7 @@ function SignUp() {
                   value={formik.values.number}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="000-000-000"
                   style={{
                     borderColor:
@@ -169,13 +173,14 @@ function SignUp() {
                   }}
                 />
                 {formik.errors.number && formik.touched.number ? (
-                  <p className="text-xs text-red-500 flex items-center mt-2">
+                  <p className="text-xs text-red-500 mt-2">
                     {formik.errors.number}
                   </p>
                 ) : null}
               </div>
+
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 ">
+                <label className="block mb-2 text-sm font-medium text-gray-900">
                   Password
                 </label>
                 <input
@@ -185,7 +190,7 @@ function SignUp() {
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="password"
                   style={{
                     borderColor:
@@ -195,23 +200,25 @@ function SignUp() {
                   }}
                 />
                 {formik.errors.password && formik.touched.password ? (
-                  <p className="text-xs text-red-500 flex items-center mt-2">
+                  <p className="text-xs text-red-500 mt-2">
                     {formik.errors.password}
                   </p>
                 ) : null}
               </div>
+
               <button
                 type="submit"
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Creating Account..." : "Create an Account"}
               </button>
-              <p className="text-sm font-light text-gray-500 flex justify-center">
+
+              <p className="text-sm font-light text-gray-500 text-center">
                 Already have an account? &nbsp;
                 <Link
                   to="/signin"
-                  className="font-medium text-primary-600 hover:underline cursor-pointer"
+                  className="font-medium text-primary-600 hover:underline"
                 >
                   Login here
                 </Link>

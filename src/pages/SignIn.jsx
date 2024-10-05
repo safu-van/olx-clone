@@ -56,18 +56,24 @@ function SignIn() {
   });
 
   return (
-    <section className="bg-gray-50">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <img src="assets/images/logo.png" className="h-10 mb-6" alt="Logo" />
-        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 ">
+    <section className="bg-gray-50 min-h-screen">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0 md:h-screen">
+        <Link to="/">
+          <img
+            src="assets/images/logo.png"
+            className="h-10 mb-6"
+            alt="Logo"
+          />
+        </Link>
+        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl flex justify-center mb-7">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl lg:text-3xl flex justify-center mb-7">
               Login
             </h1>
             <div className="space-y-4 md:space-y-6 text-left">
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900">
-                  email
+                  Email
                 </label>
                 <input
                   type="email"
@@ -124,13 +130,13 @@ function SignIn() {
                 {isSubmitting ? "Please Wait..." : "Login"}
               </button>
               <div className="flex justify-center">
-                <p className="text-sm font-light text-gray-500 ">
+                <p className="text-sm font-light text-gray-500">
                   New in OLX? &nbsp;
                   <Link
                     to="/signup"
                     className="font-medium text-primary-600 hover:underline cursor-pointer"
                   >
-                    SignUp here
+                    Sign Up here
                   </Link>
                 </p>
               </div>
