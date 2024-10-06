@@ -162,7 +162,7 @@ function AddProduct() {
             </div>
 
             <img
-              className="col-span-2 sm:col-span-1 w-full max-h-[250px] object-contain rounded-lg shadow-xl "
+              className="col-span-2 sm:col-span-1 w-full h-64 object-contain rounded-lg shadow-xl "
               src={
                 imagePreview
                   ? URL.createObjectURL(imagePreview)

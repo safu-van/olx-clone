@@ -6,7 +6,7 @@ import { FirebaseContext } from "../context/Context";
 import { collection, getDocs } from "firebase/firestore";
 
 function HomePage() {
-  const [products, setProducts] = useState();
+  const [products, setProducts] = useState([]);
   const { firestore } = useContext(FirebaseContext);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ function HomePage() {
       .catch((error) => {
         console.error("Error fetching products:", error);
       });
-  }, []);
+  }, [firestore]);
 
   return (
     <div>
@@ -33,19 +33,9 @@ function HomePage() {
         <div className="m-5 p-3 bg-gray-100 rounded-sm">
           <span className="text-xl pl-3">Products</span>
         </div>
-        <div className="flex flex-wrap gap-1 m-5 min-h-[25rem]">
-          {products ? (
-            products.length > 0 ? (
-              products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))
-            ) : (
-              <div className="w-full flex justify-center items-center text-gray-500 mt-5">
-                No products available
-              </div>
-            )
-          ) : (
-            <div className="w-full flex justify-center items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 mx-5 min-h-[25rem]">
+          {products.length === 0 ? (
+            <div className="col-span-1 sm:col-span-2 lg:col-span-5 flex justify-center items-center h-full">
               <svg
                 aria-hidden="true"
                 className="w-8 h-8 text-gray-200 animate-spin fill-gray-400"
@@ -64,6 +54,12 @@ function HomePage() {
               </svg>
               <span className="sr-only">Loading...</span>
             </div>
+          ) : (
+            products.map((product) => (
+              <div key={product.id} className="flex justify-center">
+                <ProductCard product={product} />
+              </div>
+            ))
           )}
         </div>
       </div>

@@ -35,7 +35,7 @@ const Navbar = () => {
           </div>
         </div>
         {/* Hamburger Button for mobile/tablet screens */}
-        <div className="block md:hidden">
+        <div className="block lg:hidden">
           <button
             onClick={toggleMenu}
             className="text-gray-800 focus:outline-none"
@@ -56,7 +56,7 @@ const Navbar = () => {
             </svg>
           </button>
         </div>
-        <div className="hidden md:flex items-center mx-4 max-w-4xl w-full relative">
+        <div className="hidden lg:flex items-center mx-4 max-w-4xl w-full relative">
           <input
             type="text"
             className="w-full border-2 border-gray-950 rounded-sm px-4 py-2 text-gray-700"
@@ -78,7 +78,7 @@ const Navbar = () => {
             </svg>
           </div>
         </div>
-        <div className="hidden md:flex items-center ml-4 md:ml-11 w-56 space-x-4">
+        <div className="hidden lg:flex items-center ml-4 md:ml-11 w-56 space-x-4">
           <div className="flex items-center space-x-1 text-gray-700 cursor-pointer">
             <span>English</span>
             <svg
@@ -111,7 +111,7 @@ const Navbar = () => {
             )}
           </div>
         </div>
-        <div className="hidden md:flex cursor-pointer">
+        <div className="hidden lg:flex cursor-pointer">
           <Link to="/add-product">
             <img
               src="/assets/images/sell-button.png"
@@ -126,14 +126,14 @@ const Navbar = () => {
 
       {/* Mobile view navbar */}
       {menuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-gray-100 shadow-md">
+        <div className="lg:hidden absolute top-16 left-0 w-full bg-gray-100 shadow-md">
           <div className="flex flex-col items-center py-4 space-y-2">
             <input
               type="text"
               className="w-[90%] border-2 border-gray-950 rounded-sm px-4 py-2 text-gray-700"
               placeholder="Find Cars, Mobile Phones and more..."
             />
-            <div className="flex flex-col w-full md:px-10 px-8 space-y-2">
+            <div className="flex flex-col w-full px-6 sm:px-10 space-y-2">
               <div className="text-gray-700 hover:underline cursor-pointer mt-3">
                 {user ? (
                   <div className="flex flex-col">

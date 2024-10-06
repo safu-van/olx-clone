@@ -10,9 +10,9 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className="p-5 cursor-pointer" onClick={handleClick}>
-      <div className="border border-gray-400 w-56 rounded-sm">
+      <div className="border border-gray-400 w-[19rem] lg:w-56 rounded-sm">
         <div className="w-full p-2">
-          <div className="w-full h-48">
+          <div className="w-full h-48 bg-gray-50">
             <img
               src={product.image}
               alt="Product Image"
